@@ -14,7 +14,10 @@ const FormularioColor = () => {
   } = useForm();
 
   const [colores, setColores] = useState([]);
-  const [nombreColor, setColor] = useState("");
+  
+
+  // para observar el input "nombre" en tiempo real, y cambiar el color del recuadro:
+  const colorEscrito = watch("nombre");
 
   useEffect(() => {
     cargarColores();
@@ -53,12 +56,11 @@ const FormularioColor = () => {
           >
             <div
               className="border cuadrado"
-              style={{ backgroundColor: nombreColor || "transparent" }}
+              style={{ backgroundColor: colorEscrito || "transparent" }}
             ></div>
             <Form.Control
               type="text"
-              onChange={(e) => setColor(e.target.value)}
-              value={nombreColor}
+              // onChange={(e) => setColor(e.target.value)}
               placeholder="Color en inglés, #HEX, RGB o RGBA"
               {...register("nombre", {
                 required: "El color es un dato obligatorio",
