@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import PaletaColores from "./PaletaColores.jsx";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { listarColoresApi } from "../helpers/queries.js";
 
 const FormularioColor = () => {
   const {
@@ -11,17 +12,39 @@ const FormularioColor = () => {
     watch,
     formState: { errors },
   } = useForm();
-  
-  // 1. Creamos la referencia al valor del input "nombre"
-  const nombreColor = watch("nombre");
-  
+
+  const [colores, setColores] = useState([]);
+  const [nombreColor, setColor] = useState("");
+
+  useEffect(() => {
+    cargarColores();
+  }, []);
+
+  const cargarColores = async () => {
+    const respuestaColores = await listarColoresApi();
+    if (respuestaColores && respuestaColores.status === 200) {
+      const datos = await respuestaColores.json();
+      // guarda en array los datos de la solicitud get
+      setColores(datos);
+    } else {
+      Swal.fire({
+        title: "Ocurrió un error !",
+        text: `No se pueden mostrar los colores`,
+        icon: "error",
+      });
+    }
+  };
+
   const onSubmit = (data) => {
     console.log("Datos para enviar al backend:", data);
   };
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)} className="p-4 border rounded shadow-sm">
+      <Form
+        onSubmit={handleSubmit(onSubmit)}
+        className="p-4 border rounded shadow-sm"
+      >
         {/* Contenedor principal: se vuelve flex a partir de md */}
         <div className="d-md-flex gap-2 align-items-md-center">
           <Form.Group
@@ -35,7 +58,7 @@ const FormularioColor = () => {
             <Form.Control
               type="text"
               onChange={(e) => setColor(e.target.value)}
-              // value={color}
+              value={nombreColor}
               placeholder="Color en inglés, #HEX, RGB o RGBA"
               {...register("nombre", {
                 required: "El color es un dato obligatorio",
@@ -56,7 +79,9 @@ const FormularioColor = () => {
           </Form.Group>
         </div>
       </Form>
-      <PaletaColores></PaletaColores>
+
+      <PaletaColores colores={colores}></PaletaColores>
+     
     </>
   );
 };
