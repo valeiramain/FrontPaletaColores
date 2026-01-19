@@ -3,7 +3,8 @@ import Form from "react-bootstrap/Form";
 import PaletaColores from "./PaletaColores.jsx";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { listarColoresApi } from "../helpers/queries.js";
+import { listarColoresApi, crearColorApi } from "../helpers/queries.js";
+import Swal from "sweetalert2";
 
 const FormularioColor = () => {
   const {
@@ -11,10 +12,10 @@ const FormularioColor = () => {
     handleSubmit,
     watch,
     formState: { errors },
+    reset
   } = useForm();
 
   const [colores, setColores] = useState([]);
-  
 
   // para observar el input "nombre" en tiempo real, y cambiar el color del recuadro:
   const colorEscrito = watch("nombre");
@@ -38,16 +39,37 @@ const FormularioColor = () => {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log("Datos para enviar al backend:", data);
+  const onSubmit = async (data) => {
+    // CREAR color
+    const respuestaColorCreado = await crearColorApi(data);
+    if (respuestaColorCreado && respuestaColorCreado.status === 201) {
+      Swal.fire({
+        title: "Color Creado!",
+        text: `El Color ${data.nombre} fue creado correctamente.`,
+        icon: "success",
+      });
+      reset();
+      cargarColores();
+      // setColores([...colores, respuestaColorCreado.json()]);
+    } else {
+      Swal.fire({
+        title: "Ocurrio un error al Crear el color!",
+        text: `El color ${data.nombre} no pudo ser creado.`,
+        icon: "error",
+      });
+    }
   };
 
   return (
     <>
+    
       <Form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-4 border rounded shadow-sm"
+        className="p-4 border rounded shadow-sm mb-3"
       >
+        <h5 className="text-center text-light">
+        Ingrese Color
+      </h5>
         {/* Contenedor principal: se vuelve flex a partir de md */}
         <div className="d-md-flex gap-2 align-items-md-center">
           <Form.Group
@@ -83,7 +105,6 @@ const FormularioColor = () => {
       </Form>
 
       <PaletaColores colores={colores}></PaletaColores>
-     
     </>
   );
 };
