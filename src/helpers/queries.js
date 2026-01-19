@@ -1,17 +1,6 @@
 const urlColores = import.meta.env.VITE_COLOR;
 
 
-// BUSCAR por ID
-export const buscarColorApi = async (id) =>{
-    try{
-        const respuesta = await fetch(urlColores+`/${id}`)
-        return respuesta
-    }catch(error){
-        console.error(error)
-    }
-}
-
-
 export const listarColoresApi = async () => {
   try {
     const respuesta = await fetch(urlColores);
@@ -32,6 +21,31 @@ export const crearColorApi = async (color) =>{
             },
             body: JSON.stringify(color)
         })
+        return respuesta
+    }catch(error){
+        console.error(error)
+    }
+}
+
+
+// BORRAR por ID
+export const borrarColorApi = async (id) =>{
+    try{
+        const respuesta = await fetch(urlColores+`/${id}`,{
+            method:'DELETE'
+        })
+        return respuesta
+    }catch(error){
+        console.error(error)
+    }
+}
+
+
+
+// BUSCAR por ID
+export const buscarColorApi = async (id) =>{
+    try{
+        const respuesta = await fetch(urlColores+`/${id}`)
         return respuesta
     }catch(error){
         console.error(error)

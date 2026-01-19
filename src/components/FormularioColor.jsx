@@ -15,6 +15,7 @@ const FormularioColor = () => {
     reset
   } = useForm();
 
+  //array de colores donde se guarda la respuesta del BE para armar grilla
   const [colores, setColores] = useState([]);
 
   // para observar el input "nombre" en tiempo real, y cambiar el color del recuadro:
@@ -49,6 +50,7 @@ const FormularioColor = () => {
         icon: "success",
       });
       reset();
+      //se actualiza la grilla de colores
       cargarColores();
       // setColores([...colores, respuestaColorCreado.json()]);
     } else {
@@ -104,7 +106,7 @@ const FormularioColor = () => {
         </div>
       </Form>
 
-      <PaletaColores colores={colores}></PaletaColores>
+      <PaletaColores colores={colores} setColores={setColores}></PaletaColores>
     </>
   );
 };

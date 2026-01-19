@@ -1,7 +1,8 @@
 import ItemColor from "./ItemColor.jsx";
 import { Row } from "react-bootstrap";
 
-const PaletaColores = ({ colores }) => {
+
+const PaletaColores = ({ colores,setColores }) => {
   return (
     <>
       <h1 className="text-center text-light display-5 mb-4">
@@ -10,7 +11,7 @@ const PaletaColores = ({ colores }) => {
       {/* sistema de grillas con las cards */}
       <Row xs={1} md={3} lg={4} className="g-4">
         {colores.map((color) => (
-          <ItemColor key={color._id} color={color.nombre}></ItemColor>
+          <ItemColor key={color._id} color={color} colores={colores} setColores={setColores}></ItemColor>
         ))}
       </Row>
     </>
