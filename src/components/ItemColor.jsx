@@ -1,10 +1,18 @@
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
-import { Button } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import { borrarColorApi } from "../helpers/queries.js";
 import Swal from "sweetalert2";
+import { useState } from "react";
 
 const ItemColor = ({ color, colores, setColores }) => {
+  // Estados para el Modal
+  const [show, setShow] = useState(false);
+  const [nuevoColor, setNuevoColor] = useState("");
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const eliminarColor = () => {
     Swal.fire({
       title: "Está seguro que desea eliminar el Color?",
@@ -40,27 +48,90 @@ const ItemColor = ({ color, colores, setColores }) => {
     });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aquí deberías llamar a tu función de API para editar (ej: editarColorApi)
+    console.log("Nuevo color a guardar:", nuevoColor);
+    handleClose();
+  };
+
   return (
     <>
       <Col>
-        <Card>
+        <Card className="sombra">
           <Card.Body>
-            <Card.Title>{color.nombre}</Card.Title>
+            <Card.Title className="text-center">{color.nombre}</Card.Title>
             <article className="d-flex justify-content-center mb-2">
               <div
-                className="border cuadrado"
+                className="border colorCard"
                 style={{ backgroundColor: color.nombre || "transparent" }}
               ></div>
             </article>
             <div className="d-flex justify-content-center mt-4">
-              <Button variant="warning me-2"><i className="bi bi-pencil">editar</i></Button>
+              <Button variant="warning me-2" onClick={handleShow}>
+                <i className="bi bi-pencil"></i>
+              </Button>
               <Button variant="danger" onClick={eliminarColor}>
-                <i className="bi bi-trash">borrar</i>
+                <i className="bi bi-trash"></i>
               </Button>
             </div>
           </Card.Body>
         </Card>
       </Col>
+
+      {/* //---- ventana modal para editar color ----// */}
+
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton className="bg-secondary border-bottom-0">
+          <Modal.Title className="text-dark">Editar Color</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            <div className="text-center mb-5">
+              <p>
+                Color actual: <strong>{color.nombre}</strong>
+              </p>
+              <div
+                className="mx-auto border mb-3 cuadrado"
+                style={{
+                  backgroundColor: color.nombre,
+                }}
+              ></div>
+            </div>
+
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Ingrese el nuevo color (Nombre, Hex o RGB)
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ej: Blue, #0000FF o rgb(0,0,255)"
+                value={nuevoColor}
+                onChange={(e) => setNuevoColor(e.target.value)}
+              />
+            </Form.Group>
+
+            <div className="text-center">
+              {/* <p>Vista previa del nuevo color:</p> */}
+              <div
+                className="mx-auto border cuadrado"
+                style={{
+                  backgroundColor: nuevoColor || "transparent",
+                }}
+              ></div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer className="bg-secondary border-bottom-0 d-flex justify-content-center">
+            <Button variant="danger" onClick={handleClose}>
+              Cancelar
+            </Button>
+            <Button variant="primary" type="submit">
+              Guardar Cambios
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+      {/* //---- fin ventana modal ----// */}
     </>
   );
 };

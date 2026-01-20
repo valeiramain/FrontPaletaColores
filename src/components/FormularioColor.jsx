@@ -84,7 +84,6 @@ const FormularioColor = () => {
             ></div>
             <Form.Control
               type="text"
-              // onChange={(e) => setColor(e.target.value)}
               placeholder="Color en inglés, #HEX, RGB o RGBA"
               {...register("nombre", {
                 required: "El color es un dato obligatorio",
@@ -98,6 +97,7 @@ const FormularioColor = () => {
                 },
               })}
             />
+            <Form.Text className="text-danger">{errors.nombre?.message}</Form.Text>
 
             <Button variant="primary" type="submit">
               Enviar
