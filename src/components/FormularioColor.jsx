@@ -66,7 +66,7 @@ const FormularioColor = () => {
     <>
       <Form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-4 border rounded shadow-sm mb-3"
+        className="p-4 border rounded shadow-sm mb-3 border-light "
       >
         <h5 className="text-center text-light">Ingrese Color</h5>
         <div className="d-md-flex gap-2 align-items-md-center">

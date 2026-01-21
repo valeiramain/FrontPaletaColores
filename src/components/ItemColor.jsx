@@ -68,6 +68,7 @@ const ItemColor = ({ color, colores, setColores }) => {
   
   const onSubmit = async (data) => {
     // data tiene los datos del formulario para editar color
+    data.nuevoColor = data.nuevoColor.trim().toLowerCase();
     data._id = color._id;
     const respuestaEditarColor = await editarColorApi(data.nuevoColor, data._id);
     if (respuestaEditarColor && respuestaEditarColor.status === 200) {
@@ -98,7 +99,7 @@ const ItemColor = ({ color, colores, setColores }) => {
   return (
     <>
       <Col>
-        <Card className="sombra">
+        <Card className="sombra h-100">
           <Card.Body>
             <Card.Title className="text-center">{color.nombre}</Card.Title>
             <article className="d-flex justify-content-center mb-2">
