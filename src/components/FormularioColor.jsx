@@ -42,6 +42,7 @@ const FormularioColor = () => {
 
   const onSubmit = async (data) => {
     // CREAR color
+    data.nombre = data.nombre.trim().toLowerCase();
     const respuestaColorCreado = await crearColorApi(data);
     if (respuestaColorCreado && respuestaColorCreado.status === 201) {
       Swal.fire({
@@ -52,7 +53,6 @@ const FormularioColor = () => {
       reset();
       //se actualiza la grilla de colores
       cargarColores();
-      // setColores([...colores, respuestaColorCreado.json()]);
     } else {
       Swal.fire({
         title: "Ocurrio un error al Crear el color!",
@@ -69,7 +69,6 @@ const FormularioColor = () => {
         className="p-4 border rounded shadow-sm mb-3"
       >
         <h5 className="text-center text-light">Ingrese Color</h5>
-        {/* Contenedor principal: se vuelve flex a partir de md */}
         <div className="d-md-flex gap-2 align-items-md-center">
           <Form.Group
             className="mb-md-0 d-flex gap-2 flex-grow-1 align-items-center"
