@@ -51,3 +51,21 @@ export const buscarColorApi = async (id) =>{
         console.error(error)
     }
 }
+
+
+
+//EDITAR por ID
+export const editarColorApi = async (color,id) =>{
+    try{
+        const respuesta = await fetch(urlColores+`/${id}`,{
+            method:'PUT',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({nombre: color})
+        })
+        return respuesta
+    }catch(error){
+        console.error(error)
+    }
+}

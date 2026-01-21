@@ -1,17 +1,35 @@
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import { Button, Modal, Form } from "react-bootstrap";
-import { borrarColorApi } from "../helpers/queries.js";
+import {
+  borrarColorApi,
+  editarColorApi,
+  buscarColorApi,
+} from "../helpers/queries.js";
 import Swal from "sweetalert2";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const ItemColor = ({ color, colores, setColores }) => {
-  // Estados para el Modal
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+    setValue,
+  } = useForm();
+
+  // ---- Estados para el Modal para EDITAR------
   const [show, setShow] = useState(false);
   const [nuevoColor, setNuevoColor] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const valorObservado = watch("nuevoColor");
+  //---------------------------------
+  
 
   const eliminarColor = () => {
     Swal.fire({
@@ -29,7 +47,7 @@ const ItemColor = ({ color, colores, setColores }) => {
         if (respuestaBorrarColor && respuestaBorrarColor.status === 200) {
           Swal.fire({
             title: "Color Borrado!",
-            text: `El Color ${color.nombre} fue eliminado correctamente`,
+            text: `El Color "${color.nombre}" fue eliminado correctamente`,
             icon: "success",
           });
           //actualizar contenido tabla en pantalla
@@ -40,18 +58,40 @@ const ItemColor = ({ color, colores, setColores }) => {
         } else {
           Swal.fire({
             title: "ocurrió un error al intentar borrar un color!",
-            text: `El color ${color.nombre} no se pudo borrar. Inténtelo més tarde.`,
+            text: `El color "${color.nombre}" no pudo borrar. Inténtelo més tarde.`,
             icon: "error",
           });
         }
       }
     });
   };
+  
+  const onSubmit = async (data) => {
+    // data tiene los datos del formulario para editar color
+    data._id = color._id;
+    const respuestaEditarColor = await editarColorApi(data.nuevoColor, data._id);
+    if (respuestaEditarColor && respuestaEditarColor.status === 200) {
+      Swal.fire({
+        title: "Color Editado!",
+        text: `El Color ${data.nuevoColor} fue editado correctamente.`,
+        icon: "success",
+      });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí deberías llamar a tu función de API para editar (ej: editarColorApi)
-    console.log("Nuevo color a guardar:", nuevoColor);
+      // actualizar la tabla
+      const coloresActualizados = colores.map((item) => {
+        if (item._id === data._id) {
+          return { ...item, nombre: data.nuevoColor };
+        }
+        return item;
+      });
+      setColores(coloresActualizados);
+    } else {
+      Swal.fire({
+        title: "Ocurrió un Error!",
+        text: `El Color ${data.nuevoColor} no pudo ser editado. Inténtelo en unos minutos.`,
+        icon: "error",
+      });
+    }
     handleClose();
   };
 
@@ -85,7 +125,7 @@ const ItemColor = ({ color, colores, setColores }) => {
         <Modal.Header closeButton className="bg-secondary border-bottom-0">
           <Modal.Title className="text-dark">Editar Color</Modal.Title>
         </Modal.Header>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <Modal.Body>
             <div className="text-center mb-5">
               <p>
@@ -106,9 +146,21 @@ const ItemColor = ({ color, colores, setColores }) => {
               <Form.Control
                 type="text"
                 placeholder="Ej: Blue, #0000FF o rgb(0,0,255)"
-                value={nuevoColor}
-                onChange={(e) => setNuevoColor(e.target.value)}
+                {...register("nuevoColor", {
+                  required: "El color es un dato obligatorio",
+                  minLength: {
+                    value: 3,
+                    message: "El color debe contener como minimo 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 30,
+                    message: "El color debe contener como maximo 30 caracteres",
+                  },
+                })}
               />
+              <Form.Text className="text-danger">
+                {errors.nuevoColor?.message}
+              </Form.Text>
             </Form.Group>
 
             <div className="text-center">
@@ -116,7 +168,7 @@ const ItemColor = ({ color, colores, setColores }) => {
               <div
                 className="mx-auto border cuadrado"
                 style={{
-                  backgroundColor: nuevoColor || "transparent",
+                  backgroundColor: valorObservado || "transparent",
                 }}
               ></div>
             </div>

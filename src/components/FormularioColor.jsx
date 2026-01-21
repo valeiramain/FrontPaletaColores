@@ -12,7 +12,7 @@ const FormularioColor = () => {
     handleSubmit,
     watch,
     formState: { errors },
-    reset
+    reset,
   } = useForm();
 
   //array de colores donde se guarda la respuesta del BE para armar grilla
@@ -64,14 +64,11 @@ const FormularioColor = () => {
 
   return (
     <>
-    
       <Form
         onSubmit={handleSubmit(onSubmit)}
         className="p-4 border rounded shadow-sm mb-3"
       >
-        <h5 className="text-center text-light">
-        Ingrese Color
-      </h5>
+        <h5 className="text-center text-light">Ingrese Color</h5>
         {/* Contenedor principal: se vuelve flex a partir de md */}
         <div className="d-md-flex gap-2 align-items-md-center">
           <Form.Group
@@ -97,7 +94,9 @@ const FormularioColor = () => {
                 },
               })}
             />
-            <Form.Text className="text-danger">{errors.nombre?.message}</Form.Text>
+            <Form.Text className="text-danger">
+              {errors.nombre?.message}
+            </Form.Text>
 
             <Button variant="primary" type="submit">
               Enviar
